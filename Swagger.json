@@ -1,0 +1,210 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Chess Player API",
+      "version": "1.0.0",
+      "description": "API for managing chess players and user accounts"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Local Development Server"
+      }
+    ],
+    "paths": {
+      "/top-players": {
+        "get": {
+          "summary": "Get Top Players",
+          "description": "Fetches the top 50 players based on rating.",
+          "responses": {
+            "200": {
+              "description": "A list of top players",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Player"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/player/{username}/rating-history": {
+        "get": {
+          "summary": "Get Player Rating History",
+          "description": "Fetches the rating history of a specific player by username.",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "The username of the player"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Rating history of the player",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "rating": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/players/rating-history-csv": {
+        "get": {
+          "summary": "Get Players Rating History CSV",
+          "description": "Downloads a CSV file containing the rating history of the top 50 players.",
+          "responses": {
+            "200": {
+              "description": "CSV file of players rating history",
+              "content": {
+                "text/csv": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/users/signup": {
+        "post": {
+          "summary": "User Signup",
+          "description": "Registers a new user.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewUser"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Signup successful"
+            },
+            "default": {
+              "description": "Error"
+            }
+          }
+        }
+      },
+      "/users/login": {
+        "post": {
+          "summary": "User Login",
+          "description": "Authenticates a user and returns a token.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Login"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Authentication successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "msg": {
+                        "type": "string"
+                      },
+                      "token": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "Error"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Player": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "rating": {
+              "type": "integer"
+            }
+          }
+        },
+        "NewUser": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "age": {
+              "type": "integer"
+            }
+          },
+          "required": ["name", "email", "password", "age"]
+        },
+        "Login": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": ["email", "password"]
+        }
+      }
+    }
+  }
